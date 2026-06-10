@@ -1,0 +1,70 @@
+### Variables
+@base = http://localhost:3000
+
+### Health Check
+GET {{base}}
+Accept: application/json
+
+### Get All Users
+GET {{base}}/users
+Accept: application/json
+
+### Create User
+POST {{base}}/users
+Content-Type: application/json
+
+{
+  "name": "Shovu",
+  "email": "shvou@gmail.com"
+}
+
+### Get User by ID
+GET {{base}}/users/2
+Accept: application/json
+
+### Update User
+PUT {{base}}/users/2
+Content-Type: application/json
+
+{
+  "name": "Shovu",
+  "email": "shovu1@email.com"
+}
+
+### Delete User
+DELETE {{base}}/users/1
+Accept: application/json
+
+
+### Get all Posts
+GET {{base}}/posts
+Accept: application/json
+
+### Get Post by ID
+GET {{base}}/posts/1
+Accept: application/json
+
+### Create Post
+POST {{base}}/posts
+Content-Type: application/json
+
+{
+  "title": "Post 1",
+  "content": "Content 1",
+  "published": true,
+  "authorId": 1
+}
+
+### Update Post
+PUT {{base}}/posts/1
+Content-Type: application/json
+
+{
+  "title": "Post 1 Updated",
+  "content": "Content 1 Updated",
+  "authorId": 1
+}
+
+### Delete Post
+DELETE {{base}}/posts/1
+Accept: application/json
