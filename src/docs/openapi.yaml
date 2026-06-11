@@ -1,0 +1,49 @@
+openapi: 3.0.0
+info:
+  title: Gyan Prisma API
+  description: Modular Express + Prisma ORM Backend API with Cloudinary integration.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths: {}
+
+components:
+  schemas:
+    Meta:
+      type: object
+      required:
+        - total
+        - page
+        - limit
+        - totalPages
+      properties:
+        total:
+          type: integer
+          example: 10
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 10
+        totalPages:
+          type: integer
+          example: 1
+
+    ErrorResponse:
+      type: object
+      required:
+        - success
+        - message
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "Resource not found"
+        error:
+          type: string
+          example: "Internal server error traceback details"

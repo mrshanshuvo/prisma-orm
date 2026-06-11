@@ -5,6 +5,8 @@ import { commentRoutes } from "./modules/comment/comment.route";
 import { likeRoutes } from "./modules/like/like.route";
 import { uploadRoutes } from "./modules/upload/upload.route";
 import { errorHandler } from "./middlewares/errorHandler";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger";
 
 import path from "path";
 
@@ -30,6 +32,7 @@ app.get("/", async (req, res) => {
 });
 
 // Register routes
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/", userRoutes);
 app.use("/", postRoutes);
 app.use("/", commentRoutes);

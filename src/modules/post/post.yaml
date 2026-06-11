@@ -1,0 +1,242 @@
+paths:
+  /posts:
+    get:
+      summary: Get all posts (filterable/paginated)
+      tags:
+        - Posts
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Case-insensitive search on title or content
+        - in: query
+          name: authorId
+          schema:
+            type: integer
+          description: Filter posts by author ID
+        - in: query
+          name: published
+          schema:
+            type: boolean
+          description: Filter by published status (true/false)
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Success"
+                  data:
+                    type: object
+                    properties:
+                      meta:
+                        $ref: '#/components/schemas/Meta'
+                      result:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Post'
+    post:
+      summary: Create a post
+      tags:
+        - Posts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - authorId
+              properties:
+                title:
+                  type: string
+                  example: "Exploring Prisma ORM"
+                content:
+                  type: string
+                  nullable: true
+                  example: "Here is why Prisma is awesome..."
+                published:
+                  type: boolean
+                  default: false
+                authorId:
+                  type: integer
+                  example: 1
+                images:
+                  type: array
+                  items:
+                    type: string
+                  example: ["https://picsum.photos/600/400"]
+                videos:
+                  type: array
+                  items:
+                    type: string
+                  example: ["https://example.com/video.mp4"]
+      responses:
+        201:
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Created successfully"
+                  data:
+                    $ref: '#/components/schemas/Post'
+        400:
+          description: Bad request / validation error
+
+  /posts/{id}:
+    get:
+      summary: Get post by ID
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Success"
+                  data:
+                    $ref: '#/components/schemas/PostWithDetails'
+        404:
+          description: Post not found
+    put:
+      summary: Update post
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                  nullable: true
+                published:
+                  type: boolean
+                images:
+                  type: array
+                  items:
+                    type: string
+                videos:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        200:
+          description: Updated successfully
+        404:
+          description: Post not found
+    delete:
+      summary: Delete post (cascades)
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Deleted successfully
+
+components:
+  schemas:
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "Prisma Tutorial"
+        content:
+          type: string
+          nullable: true
+          example: "Tutorial contents..."
+        published:
+          type: boolean
+          example: true
+        authorId:
+          type: integer
+          example: 1
+        images:
+          type: array
+          items:
+            type: string
+          example: ["https://picsum.photos/600/400"]
+        videos:
+          type: array
+          items:
+            type: string
+          example: []
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    PostWithDetails:
+      allOf:
+        - $ref: '#/components/schemas/Post'
+        - type: object
+          properties:
+            comments:
+              type: array
+              items:
+                type: object
+            likes:
+              type: array
+              items:
+                type: object

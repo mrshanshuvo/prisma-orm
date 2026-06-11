@@ -1,0 +1,182 @@
+paths:
+  /comments:
+    get:
+      summary: Get all comments (paginated/filtered)
+      tags:
+        - Comments
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: postId
+          schema:
+            type: integer
+          description: Filter comments by post ID
+        - in: query
+          name: authorId
+          schema:
+            type: integer
+          description: Filter comments by author ID
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Success"
+                  data:
+                    type: object
+                    properties:
+                      meta:
+                        $ref: '#/components/schemas/Meta'
+                      result:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Comment'
+    post:
+      summary: Create a comment
+      tags:
+        - Comments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+                - postId
+                - authorId
+              properties:
+                content:
+                  type: string
+                  example: "I love this post!"
+                postId:
+                  type: integer
+                  example: 1
+                authorId:
+                  type: integer
+                  example: 1
+                image:
+                  type: string
+                  nullable: true
+                  example: "https://picsum.photos/200"
+                emojis:
+                  type: array
+                  items:
+                    type: string
+                  example: ["❤️", "🔥"]
+      responses:
+        201:
+          description: Created successfully
+        400:
+          description: Bad request / validation error
+
+  /comments/{id}:
+    get:
+      summary: Get comment by ID
+      tags:
+        - Comments
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+        404:
+          description: Comment not found
+    put:
+      summary: Update comment
+      tags:
+        - Comments
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                image:
+                  type: string
+                  nullable: true
+                emojis:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        200:
+          description: Updated successfully
+        404:
+          description: Comment not found
+    delete:
+      summary: Delete comment
+      tags:
+        - Comments
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Deleted successfully
+
+components:
+  schemas:
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        content:
+          type: string
+          example: "Great point!"
+        image:
+          type: string
+          nullable: true
+          example: "https://picsum.photos/200"
+        emojis:
+          type: array
+          items:
+            type: string
+          example: ["🔥"]
+        postId:
+          type: integer
+          example: 1
+        authorId:
+          type: integer
+          example: 2
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
