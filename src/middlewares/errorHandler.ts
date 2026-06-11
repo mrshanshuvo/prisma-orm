@@ -5,14 +5,17 @@ import { sendResponse } from "../utils/sendResponse";
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   let statusCode = 500;
   let message = "Internal Server Error";
-  const errorDetail = err.message || err;
+  let errorDetail: any = undefined;
 
   if (err instanceof AppError) {
     statusCode = err.statusCode;
     message = err.message;
-  } else if (err.message && err.message.toLowerCase().includes("not found")) {
-    statusCode = 404;
-    message = "Not Found";
+  } else {
+    errorDetail = err.message || err;
+    if (err.message && err.message.toLowerCase().includes("not found")) {
+      statusCode = 404;
+      message = "Not Found";
+    }
   }
 
   sendResponse(res, {
