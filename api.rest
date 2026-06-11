@@ -28,7 +28,7 @@ Content-Type: application/json
 }
 
 ### Get User by ID
-GET {{base}}/users/2
+GET {{base}}/users/3
 Accept: application/json
 
 ### Update User
@@ -58,7 +58,7 @@ GET {{base}}/posts?page=1&limit=2
 Accept: application/json
 
 ### Get all Posts (Search query)
-GET {{base}}/posts?search=Post
+GET {{base}}/posts?search=Post+title+1
 Accept: application/json
 
 ### Get all Posts (Filtered by Author & Published)

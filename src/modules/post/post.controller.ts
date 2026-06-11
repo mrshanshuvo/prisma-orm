@@ -4,12 +4,18 @@ import { postService } from "./post.service";
 import { catchAsync } from "../../utils/catchAsync";
 import { BadRequestError } from "../../utils/errors";
 
+// CRUD - READ all Posts
 const getAllPosts = catchAsync(async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string, 10) || 1;
   const limit = parseInt(req.query.limit as string, 10) || 10;
   const search = req.query.search as string;
-  const authorId = req.query.authorId ? parseInt(req.query.authorId as string, 10) : undefined;
-  const published = req.query.published !== undefined ? req.query.published === "true" : undefined;
+  const authorId = req.query.authorId
+    ? parseInt(req.query.authorId as string, 10)
+    : undefined;
+  const published =
+    req.query.published !== undefined
+      ? req.query.published === "true"
+      : undefined;
 
   const result = await postService.getAllPostsFromDB({
     page,
@@ -27,6 +33,7 @@ const getAllPosts = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// CRUD - READ single Post
 const getPostById = catchAsync(async (req: Request, res: Response) => {
   const postId = parseInt(req.params.id as string, 10);
   if (isNaN(postId)) {
@@ -41,14 +48,9 @@ const getPostById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// CRUD - CREATE single Post
 const createPost = catchAsync(async (req: Request, res: Response) => {
   const body = req.body;
-  if (!body.title) {
-    throw new BadRequestError("Title is required");
-  }
-  if (!body.authorId) {
-    throw new BadRequestError("Author ID is required");
-  }
   const post = await postService.createPostInDB(body);
   sendResponse(res, {
     statusCode: 201,
@@ -58,6 +60,7 @@ const createPost = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// CRUD - UPDATE single Post
 const updatePost = catchAsync(async (req: Request, res: Response) => {
   const postId = parseInt(req.params.id as string, 10);
   if (isNaN(postId)) {
@@ -73,6 +76,7 @@ const updatePost = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// CRUD - DELETE single Post
 const deletePost = catchAsync(async (req: Request, res: Response) => {
   const postId = parseInt(req.params.id as string, 10);
   if (isNaN(postId)) {

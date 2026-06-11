@@ -4,11 +4,16 @@ import { likeService } from "./like.service";
 import { catchAsync } from "../../utils/catchAsync";
 import { BadRequestError } from "../../utils/errors";
 
+// CRUD - READ all Likes
 const getAllLikes = catchAsync(async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string, 10) || 1;
   const limit = parseInt(req.query.limit as string, 10) || 10;
-  const postId = req.query.postId ? parseInt(req.query.postId as string, 10) : undefined;
-  const userId = req.query.userId ? parseInt(req.query.userId as string, 10) : undefined;
+  const postId = req.query.postId
+    ? parseInt(req.query.postId as string, 10)
+    : undefined;
+  const userId = req.query.userId
+    ? parseInt(req.query.userId as string, 10)
+    : undefined;
 
   const result = await likeService.getAllLikesFromDB({
     page,
@@ -25,6 +30,7 @@ const getAllLikes = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// CRUD - READ single Like
 const getLike = catchAsync(async (req: Request, res: Response) => {
   const id = parseInt(req.params.id as string, 10);
   if (isNaN(id)) {
@@ -39,14 +45,9 @@ const getLike = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// CRUD - TOGGLE single Like
 const toggleLike = catchAsync(async (req: Request, res: Response) => {
   const data = req.body;
-  if (!data.postId) {
-    throw new BadRequestError("Post ID is required");
-  }
-  if (!data.userId) {
-    throw new BadRequestError("User ID is required");
-  }
   const result = await likeService.toggleLikeInDB(data);
   const isCreated = result.action === "created";
 

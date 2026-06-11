@@ -1,21 +1,31 @@
 import { Router } from "express";
 import { userController } from "./user.controller";
+import { validateRequest } from "../../middlewares/validateRequest";
+import { userValidation } from "./user.validation";
 
 const router = Router();
 
-// 2. GET /users - Get all users
+// 1. GET /users - Get all users
 router.get("/users", userController.getAllUsers);
 
-// 3. POST /users - Create a user
-router.post("/users", userController.createUser);
+// 2. POST /users - Create a user
+router.post(
+  "/users",
+  validateRequest(userValidation.createUserSchema),
+  userController.createUser,
+);
 
-// 4. GET /users/:id - Get single user
+// 3. GET /users/:id - Get single user
 router.get("/users/:id", userController.getUserById);
 
-// 5. PUT /users/:id - Update user
-router.put("/users/:id", userController.updateUser);
+// 4. PUT /users/:id - Update user
+router.put(
+  "/users/:id",
+  validateRequest(userValidation.updateUserSchema),
+  userController.updateUser,
+);
 
-// 6. DELETE /users/:id - Delete user
+// 5. DELETE /users/:id - Delete user
 router.delete("/users/:id", userController.deleteUser);
 
 export { router as userRoutes };

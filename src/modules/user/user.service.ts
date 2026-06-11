@@ -1,6 +1,7 @@
 import prisma from "../../config/db";
 import { NotFoundError } from "../../utils/errors";
 
+// CRUD - READ all Users
 const getAllUsers = async (options: { page: number; limit: number }) => {
   const { page, limit } = options;
   const skip = (page - 1) * limit;
@@ -27,6 +28,7 @@ const getAllUsers = async (options: { page: number; limit: number }) => {
   };
 };
 
+// CRUD - READ single User
 const getUserById = async (id: number) => {
   const user = await prisma.user.findUnique({
     where: { id },
@@ -35,11 +37,14 @@ const getUserById = async (id: number) => {
   return user;
 };
 
+// CRUD - CREATE single User
 const createUser = async (data: { email: string; name?: string | null }) => {
   return await prisma.user.create({
     data,
   });
 };
+
+// CRUD - UPDATE single User
 const updateUser = async (
   id: number,
   data: { email?: string; name?: string | null },
@@ -52,6 +57,8 @@ const updateUser = async (
     data,
   });
 };
+
+// CRUD - DELETE single User
 const deleteUser = async (id: number) => {
   const user = await prisma.user.findUnique({ where: { id } });
   if (!user) throw new NotFoundError("User not found");

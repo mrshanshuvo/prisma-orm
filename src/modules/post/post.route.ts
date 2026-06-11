@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { postController } from "./post.controller";
+import { validateRequest } from "../../middlewares/validateRequest";
+import { postValidation } from "./post.validation";
 
 const router = Router();
 
@@ -10,10 +12,18 @@ router.get("/posts", postController.getAllPosts);
 router.get("/posts/:id", postController.getPostById);
 
 // 3. POST /posts - create post
-router.post("/posts", postController.createPost);
+router.post(
+  "/posts",
+  validateRequest(postValidation.createPostSchema),
+  postController.createPost,
+);
 
 // 4. PUT /posts/:id - update post
-router.put("/posts/:id", postController.updatePost);
+router.put(
+  "/posts/:id",
+  validateRequest(postValidation.updatePostSchema),
+  postController.updatePost,
+);
 
 // 5. DELETE /posts/:id - delete post
 router.delete("/posts/:id", postController.deletePost);

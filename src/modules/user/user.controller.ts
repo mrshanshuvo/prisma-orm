@@ -4,6 +4,7 @@ import { userService } from "./user.service";
 import { catchAsync } from "../../utils/catchAsync";
 import { BadRequestError } from "../../utils/errors";
 
+// CRUD - READ all Users
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string, 10) || 1;
   const limit = parseInt(req.query.limit as string, 10) || 10;
@@ -16,6 +17,7 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// CRUD - READ single User
 const getUserById = catchAsync(async (req: Request, res: Response) => {
   const userId = parseInt(req.params.id as string, 10);
   if (isNaN(userId)) {
@@ -30,11 +32,9 @@ const getUserById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// CRUD - CREATE single User
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const body = req.body;
-  if (!body.email) {
-    throw new BadRequestError("Email is required");
-  }
   const user = await userService.createUser({
     email: body.email,
     name: body.name || null,
@@ -47,6 +47,7 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// CRUD - UPDATE single User
 const updateUser = catchAsync(async (req: Request, res: Response) => {
   const userId = parseInt(req.params.id as string, 10);
   if (isNaN(userId)) {
@@ -65,6 +66,7 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// CRUD - DELETE single User
 const deleteUser = catchAsync(async (req: Request, res: Response) => {
   const userId = parseInt(req.params.id as string, 10);
   if (isNaN(userId)) {

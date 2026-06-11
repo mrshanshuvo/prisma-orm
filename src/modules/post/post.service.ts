@@ -1,6 +1,7 @@
 import prisma from "../../config/db";
 import { NotFoundError } from "../../utils/errors";
 
+// CRUD - READ all Posts
 const getAllPostsFromDB = async (options: {
   page: number;
   limit: number;
@@ -69,6 +70,7 @@ const getAllPostsFromDB = async (options: {
   };
 };
 
+// CRUD - READ single Post
 const getPostByIdFromDB = async (id: number) => {
   const post = await prisma.post.findUnique({
     where: { id },
@@ -81,6 +83,7 @@ const getPostByIdFromDB = async (id: number) => {
   return post;
 };
 
+// CRUD - CREATE single Post
 const createPostInDB = async (data: {
   title: string;
   content?: string | null;
@@ -103,6 +106,7 @@ const createPostInDB = async (data: {
   });
 };
 
+// CRUD - UPDATE single Post
 const updatePostByIdInDB = async (
   id: number,
   data: {
@@ -130,6 +134,7 @@ const updatePostByIdInDB = async (
   });
 };
 
+// CRUD - DELETE single Post
 const deletePostByIdInDB = async (id: number) => {
   const post = await prisma.post.findUnique({ where: { id } });
   if (!post) throw new NotFoundError("Post not found");

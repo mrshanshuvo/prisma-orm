@@ -7,15 +7,6 @@ import { BadRequestError } from "../../utils/errors";
 // CRUD - CREATE single Comment
 const createComment = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
-  if (!payload.content) {
-    throw new BadRequestError("Content is required");
-  }
-  if (!payload.postId) {
-    throw new BadRequestError("Post ID is required");
-  }
-  if (!payload.authorId) {
-    throw new BadRequestError("Author ID is required");
-  }
   const comment = await commentService.createCommentInDB(payload);
   sendResponse(res, {
     statusCode: 201,

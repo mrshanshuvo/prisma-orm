@@ -37,25 +37,34 @@ src/
 ├── app.ts                  # Express application setup
 ├── config/                 # Configurations
 │   └── db.ts               # Prisma client and pool setup
+├── middlewares/            # Express middlewares
+│   ├── errorHandler.ts     # Global error handler
+│   └── validateRequest.ts  # Zod schema validation middleware
 ├── utils/                  # Shared utility functions
+│   ├── catchAsync.ts       # Async error wrapper
+│   ├── errors.ts           # Custom error classes
 │   └── sendResponse.ts     # Unified API response sender
 └── modules/                # Feature-based modular structure
     ├── user/
     │   ├── user.route.ts
     │   ├── user.controller.ts
-    │   └── user.service.ts
+    │   ├── user.service.ts
+    │   └── user.validation.ts
     ├── post/
     │   ├── post.route.ts
     │   ├── post.controller.ts
-    │   └── post.service.ts
+    │   ├── post.service.ts
+    │   └── post.validation.ts
     ├── comment/
     │   ├── comment.route.ts
     │   ├── comment.controller.ts
-    │   └── comment.service.ts
+    │   ├── comment.service.ts
+    │   └── comment.validation.ts
     └── like/
         ├── like.route.ts
         ├── like.controller.ts
-        └── like.service.ts
+        ├── like.service.ts
+        └── like.validation.ts
 ```
 
 ---
@@ -175,6 +184,37 @@ const getLike = catchAsync(async (req: Request, res: Response) => {
     data: like,
   });
 });
+```
+
+---
+
+### **4. Request Schema Validation (Zod)**
+
+**Strategy**: We validate incoming payloads (`req.body`) using Zod schemas inside the routing layer. This keeps our controllers clean of manual presence/type checking.
+
+**Middleware**: `/src/middlewares/validateRequest.ts`
+
+**Example Validation Schema (`user.validation.ts`)**:
+```typescript
+import { z } from "zod";
+
+const createUserSchema = z.object({
+  email: z.string().email("Invalid email format"),
+  name: z.string().nullable().optional(),
+});
+
+export const userValidation = {
+  createUserSchema,
+};
+```
+
+**Usage in Route**:
+```typescript
+router.post(
+  "/users",
+  validateRequest(userValidation.createUserSchema),
+  userController.createUser,
+);
 ```
 
 ---

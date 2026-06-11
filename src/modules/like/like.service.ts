@@ -1,6 +1,7 @@
 import prisma from "../../config/db";
 import { NotFoundError } from "../../utils/errors";
 
+// CRUD - READ all Likes
 const getAllLikesFromDB = async (options: {
   page: number;
   limit: number;
@@ -43,6 +44,7 @@ const getAllLikesFromDB = async (options: {
   };
 };
 
+// CRUD - READ single Like
 const getLikeFromDB = async (id: number) => {
   const like = await prisma.like.findUnique({
     where: { id },
@@ -55,6 +57,7 @@ const getLikeFromDB = async (id: number) => {
   return like;
 };
 
+// CRUD - TOGGLE single Like
 const toggleLikeInDB = async (data: { postId: number; userId: number }) => {
   const user = await prisma.user.findUnique({
     where: { id: data.userId },
