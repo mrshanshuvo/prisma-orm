@@ -56,6 +56,43 @@ describe("Post Integration Tests", () => {
     expect(res.body.message).toContain("title");
   });
 
+  it("should return empty result array when search queries do not match", async () => {
+    const res = await request(app)
+      .get("/posts?search=nonexistentterm");
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data.meta.total).toBe(0);
+    expect(res.body.data.result.length).toBe(0);
+  });
+
+  it("should return 404 if post not found", async () => {
+    const res = await request(app).get("/posts/99999");
+    expect(res.status).toBe(404);
+    expect(res.body.success).toBe(false);
+    expect(res.body.message).toBe("Post not found");
+  });
+
+  it("should return 400 if post ID is invalid format", async () => {
+    const res = await request(app).get("/posts/abc");
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+    expect(res.body.message).toContain("post ID");
+  });
+
+  it("should reject post creation when images is not an array", async () => {
+    const res = await request(app)
+      .post("/posts")
+      .send({
+        title: "Bad Post Media",
+        authorId: testAuthorId,
+        images: "not-an-array",
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+  });
+
   it("should search posts by title (case-insensitive)", async () => {
     const res = await request(app)
       .get("/posts?search=title");

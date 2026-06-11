@@ -85,4 +85,32 @@ describe("Comment Integration Tests", () => {
     expect(res.body.data.image).toBe("https://picsum.photos/300/300");
     expect(res.body.data.emojis).toEqual(["👍"]);
   });
+
+  it("should return 404 if comment not found", async () => {
+    const res = await request(app).get("/comments/99999");
+    expect(res.status).toBe(404);
+    expect(res.body.success).toBe(false);
+    expect(res.body.message).toBe("Comment not found");
+  });
+
+  it("should return 400 if comment ID is invalid format", async () => {
+    const res = await request(app).get("/comments/abc");
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+    expect(res.body.message).toContain("comment ID");
+  });
+
+  it("should reject comment creation when emojis is not an array", async () => {
+    const res = await request(app)
+      .post("/comments")
+      .send({
+        content: "Bad Comment Emojis",
+        postId: testPostId,
+        authorId: testAuthorId,
+        emojis: "not-an-array",
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+  });
 });
