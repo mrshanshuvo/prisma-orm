@@ -5,7 +5,7 @@
   "main": "src/server.ts",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles",
-    "build": "tsc && tsc-alias",
+    "build": "prisma generate && tsc && tsc-alias",
     "start": "node dist/src/server.js",
     "dev": "tsx watch src/server.ts"
   },
