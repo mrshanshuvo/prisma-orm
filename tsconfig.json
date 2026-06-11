@@ -8,12 +8,14 @@
     "skipLibCheck": true,
     "outDir": "dist",
     "types": [
-      "node"
+      "node",
+      "jest"
     ]
   },
   "include": [
     "src/**/*",
     "src/server.ts",
-    "prisma.config.ts"
+    "prisma.config.ts",
+    "tests/**/*"
   ]
 }

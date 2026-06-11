@@ -383,3 +383,30 @@ app.use((req, res) => {
 
 export default app;
 ```
+
+---
+
+## 🧪 Testing Suite
+
+### **1. Test Configuration**
+Integration tests are configured using **Jest** and **Supertest** with `ts-jest` for executing TypeScript tests.
+
+- Config: `jest.config.ts`
+- Script: `npm run test` or `npm test`
+
+### **2. Testing Database Strategy**
+Tests should clean the database before and after running using a shared helper. To run tests in isolation:
+```typescript
+import { cleanDatabase } from "./testHelpers";
+
+beforeAll(async () => {
+  await cleanDatabase();
+});
+
+afterAll(async () => {
+  await cleanDatabase();
+});
+```
+
+### **3. Writing Integration Tests**
+Integration test files belong under the `/tests/` directory and match `*.test.ts`. They should test standard responses, validation middleware logic, and pagination schemas.
