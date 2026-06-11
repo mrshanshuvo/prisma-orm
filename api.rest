@@ -68,3 +68,35 @@ Content-Type: application/json
 ### Delete Post
 DELETE {{base}}/posts/1
 Accept: application/json
+
+### Get all Comments
+GET {{base}}/comments
+Accept: application/json
+
+### Get Comment
+GET {{base}}/comments/1
+Accept: application/json
+
+### Create Comment
+POST {{base}}/comments
+Content-Type: application/json
+
+{
+  "content" : "comment 3",
+  "postId" : 1,
+  "authorId" : 2
+}
+
+### Update Comment
+PUT {{base}}/comments/1 HTTP/1.1
+Content-Type: application/json
+
+{
+  "content" : "comment 3 updated",
+  "postId" : 1,
+  "authorId" : 2
+}
+
+### Delete Comment
+DELETE {{base}}/comments/1 HTTP/1.1
+Accept: application/json
