@@ -5,8 +5,17 @@
 GET {{base}}
 Accept: application/json
 
+
+# ==========================================
+# USERS ENDPOINTS
+# ==========================================
+
 ### Get All Users
 GET {{base}}/users
+Accept: application/json
+
+### Get All Users (Paginated)
+GET {{base}}/users?page=1&limit=2
 Accept: application/json
 
 ### Create User
@@ -36,8 +45,28 @@ DELETE {{base}}/users/1
 Accept: application/json
 
 
+# ==========================================
+# POSTS ENDPOINTS
+# ==========================================
+
 ### Get all Posts
 GET {{base}}/posts
+Accept: application/json
+
+### Get all Posts (Paginated)
+GET {{base}}/posts?page=1&limit=2
+Accept: application/json
+
+### Get all Posts (Search query)
+GET {{base}}/posts?search=Post
+Accept: application/json
+
+### Get all Posts (Filtered by Author & Published)
+GET {{base}}/posts?authorId=1&published=true
+Accept: application/json
+
+### Get all Posts (Combined Query)
+GET {{base}}/posts?page=1&limit=5&search=Post&authorId=1&published=true
 Accept: application/json
 
 ### Get Post by ID
@@ -69,8 +98,17 @@ Content-Type: application/json
 DELETE {{base}}/posts/1
 Accept: application/json
 
+
+# ==========================================
+# COMMENTS ENDPOINTS
+# ==========================================
+
 ### Get all Comments
 GET {{base}}/comments
+Accept: application/json
+
+### Get all Comments (Paginated & Filtered)
+GET {{base}}/comments?page=1&limit=5&postId=1&authorId=2
 Accept: application/json
 
 ### Get Comment
@@ -101,8 +139,17 @@ Content-Type: application/json
 DELETE {{base}}/comments/1 HTTP/1.1
 Accept: application/json
 
+
+# ==========================================
+# LIKES ENDPOINTS
+# ==========================================
+
 ### Get all Likes
 GET {{base}}/likes
+Accept: application/json
+
+### Get all Likes (Paginated & Filtered)
+GET {{base}}/likes?page=1&limit=5&postId=1&userId=1
 Accept: application/json
 
 ### Get Like
@@ -118,3 +165,15 @@ Content-Type: application/json
   "userId": 1
 }
 
+
+# ==========================================
+# ERROR TESTING ENDPOINTS
+# ==========================================
+
+### Error 404 (Not Found User)
+GET {{base}}/users/99999
+Accept: application/json
+
+### Error 400 (Bad Request / Invalid ID parameter)
+GET {{base}}/users/abc
+Accept: application/json

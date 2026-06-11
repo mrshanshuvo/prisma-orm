@@ -3,6 +3,7 @@ import { userRoutes } from "./modules/user/user.route";
 import { postRoutes } from "./modules/post/post.route";
 import { commentRoutes } from "./modules/comment/comment.route";
 import { likeRoutes } from "./modules/like/like.route";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const app = express();
 
@@ -34,5 +35,8 @@ app.use("/", likeRoutes);
 app.use((req, res) => {
   res.status(404).json({ message: "Not Found" });
 });
+
+// Global Error Handler
+app.use(errorHandler);
 
 export default app;

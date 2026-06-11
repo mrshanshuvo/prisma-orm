@@ -1,14 +1,37 @@
 import prisma from "../../config/db";
+import { NotFoundError } from "../../utils/errors";
 
-const getAllUsers = async () => {
-  return await prisma.user.findMany();
+const getAllUsers = async (options: { page: number; limit: number }) => {
+  const { page, limit } = options;
+  const skip = (page - 1) * limit;
+  const take = limit;
+
+  const [total, result] = await prisma.$transaction([
+    prisma.user.count(),
+    prisma.user.findMany({
+      skip,
+      take,
+    }),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    meta: {
+      total,
+      page,
+      limit,
+      totalPages,
+    },
+    result,
+  };
 };
 
 const getUserById = async (id: number) => {
   const user = await prisma.user.findUnique({
     where: { id },
   });
-  if (!user) throw new Error("User not found");
+  if (!user) throw new NotFoundError("User not found");
   return user;
 };
 
@@ -22,7 +45,7 @@ const updateUser = async (
   data: { email?: string; name?: string | null },
 ) => {
   const user = await prisma.user.findUnique({ where: { id } });
-  if (!user) throw new Error("User not found");
+  if (!user) throw new NotFoundError("User not found");
 
   return await prisma.user.update({
     where: { id },
@@ -31,7 +54,7 @@ const updateUser = async (
 };
 const deleteUser = async (id: number) => {
   const user = await prisma.user.findUnique({ where: { id } });
-  if (!user) throw new Error("User not found");
+  if (!user) throw new NotFoundError("User not found");
 
   return await prisma.user.delete({
     where: { id },

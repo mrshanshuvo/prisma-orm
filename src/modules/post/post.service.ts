@@ -1,16 +1,72 @@
 import prisma from "../../config/db";
+import { NotFoundError } from "../../utils/errors";
 
-const getAllPostsFromDB = async () => {
-  return await prisma.post.findMany({
-    include: {
-      _count: {
-        select: {
-          comments: true,
-          likes: true,
+const getAllPostsFromDB = async (options: {
+  page: number;
+  limit: number;
+  search?: string;
+  authorId?: number;
+  published?: boolean;
+}) => {
+  const { page, limit, search, authorId, published } = options;
+  const skip = (page - 1) * limit;
+  const take = limit;
+
+  const where: any = {};
+
+  if (authorId !== undefined) {
+    where.authorId = authorId;
+  }
+
+  if (published !== undefined) {
+    where.published = published;
+  }
+
+  if (search) {
+    where.OR = [
+      {
+        title: {
+          contains: search,
+          mode: "insensitive",
         },
       },
+      {
+        content: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+    ];
+  }
+
+  const [total, result] = await prisma.$transaction([
+    prisma.post.count({ where }),
+    prisma.post.findMany({
+      where,
+      skip,
+      take,
+      include: {
+        _count: {
+          select: {
+            comments: true,
+            likes: true,
+          },
+        },
+      },
+    }),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    meta: {
+      total,
+      page,
+      limit,
+      totalPages,
     },
-  });
+    result,
+  };
 };
 
 const getPostByIdFromDB = async (id: number) => {
@@ -21,7 +77,7 @@ const getPostByIdFromDB = async (id: number) => {
       likes: true,
     },
   });
-  if (!post) throw new Error("Post not found");
+  if (!post) throw new NotFoundError("Post not found");
   return post;
 };
 
@@ -35,7 +91,7 @@ const createPostInDB = async (data: {
     where: { id: data.authorId },
   });
   if (!user) {
-    throw new Error("User not found");
+    throw new NotFoundError("User not found");
   }
   return await prisma.post.create({
     data: {
@@ -61,12 +117,12 @@ const updatePostByIdInDB = async (
       where: { id: data.authorId },
     });
     if (!user) {
-      throw new Error("User not found");
+      throw new NotFoundError("User not found");
     }
   }
 
   const post = await prisma.post.findUnique({ where: { id } });
-  if (!post) throw new Error("Post not found");
+  if (!post) throw new NotFoundError("Post not found");
 
   return await prisma.post.update({
     where: { id },
@@ -76,7 +132,7 @@ const updatePostByIdInDB = async (
 
 const deletePostByIdInDB = async (id: number) => {
   const post = await prisma.post.findUnique({ where: { id } });
-  if (!post) throw new Error("Post not found");
+  if (!post) throw new NotFoundError("Post not found");
 
   return await prisma.post.delete({
     where: { id },

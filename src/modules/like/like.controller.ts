@@ -1,69 +1,62 @@
 import { sendResponse } from "../../utils/sendResponse";
 import { Request, Response } from "express";
 import { likeService } from "./like.service";
+import { catchAsync } from "../../utils/catchAsync";
+import { BadRequestError } from "../../utils/errors";
 
-const getAllLikes = async (req: Request, res: Response) => {
-  try {
-    const likes = await likeService.getAllLikesFromDB();
-    sendResponse(res, {
-      statusCode: 200,
-      success: true,
-      message: "Success",
-      data: likes,
-    });
-  } catch (error: any) {
-    sendResponse(res, {
-      statusCode: 500,
-      success: false,
-      message: "Internal Server Error",
-      error: error.message || error,
-    });
+const getAllLikes = catchAsync(async (req: Request, res: Response) => {
+  const page = parseInt(req.query.page as string, 10) || 1;
+  const limit = parseInt(req.query.limit as string, 10) || 10;
+  const postId = req.query.postId ? parseInt(req.query.postId as string, 10) : undefined;
+  const userId = req.query.userId ? parseInt(req.query.userId as string, 10) : undefined;
+
+  const result = await likeService.getAllLikesFromDB({
+    page,
+    limit,
+    postId,
+    userId,
+  });
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Success",
+    data: result,
+  });
+});
+
+const getLike = catchAsync(async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id as string, 10);
+  if (isNaN(id)) {
+    throw new BadRequestError("Invalid like ID");
   }
-};
+  const like = await likeService.getLikeFromDB(id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Success",
+    data: like,
+  });
+});
 
-const getLike = async (req: Request, res: Response) => {
-  try {
-    const id = parseInt(req.params.id as string, 10);
-    const like = await likeService.getLikeFromDB(id);
-    sendResponse(res, {
-      statusCode: 200,
-      success: true,
-      message: "Success",
-      data: like,
-    });
-  } catch (error: any) {
-    const isNotFound = error.message && error.message.includes("not found");
-    sendResponse(res, {
-      statusCode: isNotFound ? 404 : 500,
-      success: false,
-      message: isNotFound ? "Not Found" : "Internal Server Error",
-      error: error.message || error,
-    });
+const toggleLike = catchAsync(async (req: Request, res: Response) => {
+  const data = req.body;
+  if (!data.postId) {
+    throw new BadRequestError("Post ID is required");
   }
-};
-
-const toggleLike = async (req: Request, res: Response) => {
-  try {
-    const data = req.body;
-    const result = await likeService.toggleLikeInDB(data);
-    const isCreated = result.action === "created";
-
-    sendResponse(res, {
-      statusCode: isCreated ? 201 : 200,
-      success: true,
-      message: isCreated ? "Created successfully" : "Deleted successfully",
-      data: result.like,
-    });
-  } catch (error: any) {
-    const isNotFound = error.message && error.message.includes("not found");
-    sendResponse(res, {
-      statusCode: isNotFound ? 404 : 500,
-      success: false,
-      message: isNotFound ? "Not Found" : "Internal Server Error",
-      error: error.message || error,
-    });
+  if (!data.userId) {
+    throw new BadRequestError("User ID is required");
   }
-};
+  const result = await likeService.toggleLikeInDB(data);
+  const isCreated = result.action === "created";
+
+  sendResponse(res, {
+    statusCode: isCreated ? 201 : 200,
+    success: true,
+    message: isCreated ? "Created successfully" : "Deleted successfully",
+    data: result.like,
+  });
+});
 
 export const likeController = {
   getAllLikes,
