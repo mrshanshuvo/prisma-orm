@@ -100,3 +100,21 @@ Content-Type: application/json
 ### Delete Comment
 DELETE {{base}}/comments/1 HTTP/1.1
 Accept: application/json
+
+### Get all Likes
+GET {{base}}/likes
+Accept: application/json
+
+### Get Like
+GET {{base}}/likes/2
+Accept: application/json
+
+### Toggle Like
+POST {{base}}/likes
+Content-Type: application/json
+
+{
+  "postId": 1,
+  "userId": 1
+}
+

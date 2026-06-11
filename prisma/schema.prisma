@@ -12,6 +12,7 @@ model User {
   name     String?
   posts    Post[]
   comments Comment[]
+  likes    Like[]
 }
 
 model Post {
@@ -22,6 +23,7 @@ model Post {
   author    User      @relation(fields: [authorId], references: [id])
   authorId  Int
   comments  Comment[]
+  likes     Like[]
 }
 
 model Comment {
@@ -33,4 +35,16 @@ model Comment {
 
   author   User @relation(fields: [authorId], references: [id])
   authorId Int
+}
+
+model Like {
+  id Int @id @default(autoincrement())
+
+  post   Post @relation(fields: [postId], references: [id])
+  postId Int
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  @@unique([postId, userId])
 }

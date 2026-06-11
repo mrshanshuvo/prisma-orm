@@ -2,6 +2,7 @@ import express from "express";
 import { userRoutes } from "./modules/user/user.route";
 import { postRoutes } from "./modules/post/post.route";
 import { commentRoutes } from "./modules/comment/comment.route";
+import { likeRoutes } from "./modules/like/like.route";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.get("/", async (req, res) => {
 app.use("/", userRoutes);
 app.use("/", postRoutes);
 app.use("/", commentRoutes);
+app.use("/", likeRoutes);
 
 // Route not found (Fallback)
 app.use((req, res) => {

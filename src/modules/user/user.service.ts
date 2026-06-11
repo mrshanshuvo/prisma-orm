@@ -5,9 +5,11 @@ const getAllUsers = async () => {
 };
 
 const getUserById = async (id: number) => {
-  return await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id },
   });
+  if (!user) throw new Error("User not found");
+  return user;
 };
 
 const createUser = async (data: { email: string; name?: string | null }) => {
@@ -19,12 +21,18 @@ const updateUser = async (
   id: number,
   data: { email?: string; name?: string | null },
 ) => {
+  const user = await prisma.user.findUnique({ where: { id } });
+  if (!user) throw new Error("User not found");
+
   return await prisma.user.update({
     where: { id },
     data,
   });
 };
 const deleteUser = async (id: number) => {
+  const user = await prisma.user.findUnique({ where: { id } });
+  if (!user) throw new Error("User not found");
+
   return await prisma.user.delete({
     where: { id },
   });

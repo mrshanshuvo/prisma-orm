@@ -1,13 +1,28 @@
 import prisma from "../../config/db";
 
 const getAllPostsFromDB = async () => {
-  return await prisma.post.findMany();
+  return await prisma.post.findMany({
+    include: {
+      _count: {
+        select: {
+          comments: true,
+          likes: true,
+        },
+      },
+    },
+  });
 };
 
 const getPostByIdFromDB = async (id: number) => {
-  return await prisma.post.findUnique({
+  const post = await prisma.post.findUnique({
     where: { id },
+    include: {
+      comments: true,
+      likes: true,
+    },
   });
+  if (!post) throw new Error("Post not found");
+  return post;
 };
 
 const createPostInDB = async (data: {
@@ -49,6 +64,10 @@ const updatePostByIdInDB = async (
       throw new Error("User not found");
     }
   }
+
+  const post = await prisma.post.findUnique({ where: { id } });
+  if (!post) throw new Error("Post not found");
+
   return await prisma.post.update({
     where: { id },
     data,
@@ -56,6 +75,9 @@ const updatePostByIdInDB = async (
 };
 
 const deletePostByIdInDB = async (id: number) => {
+  const post = await prisma.post.findUnique({ where: { id } });
+  if (!post) throw new Error("Post not found");
+
   return await prisma.post.delete({
     where: { id },
   });

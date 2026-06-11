@@ -6,6 +6,14 @@ const createCommentInDB = async (payload: {
   postId: number;
   authorId: number;
 }) => {
+  const user = await prisma.user.findUnique({
+    where: { id: payload.authorId },
+  });
+  if (!user) throw new Error("User not found");
+
+  const post = await prisma.post.findUnique({ where: { id: payload.postId } });
+  if (!post) throw new Error("Post not found");
+
   return await prisma.comment.create({
     data: {
       content: payload.content,
@@ -22,9 +30,11 @@ const getAllCommentsFromDB = async () => {
 
 // CRUD - READ single Comment
 const getCommentFromDB = async (id: number) => {
-  return await prisma.comment.findMany({
-    where: { id: id },
+  const comment = await prisma.comment.findUnique({
+    where: { id },
   });
+  if (!comment) throw new Error("Comment not found");
+  return comment;
 };
 
 // CRUD - UPDATE single Comment
@@ -36,6 +46,19 @@ const updateCommentInDB = async (
     authorId: number;
   },
 ) => {
+  const comment = await prisma.comment.findUnique({ where: { id } });
+  if (!comment) throw new Error("Comment not found");
+
+  if (data.authorId !== undefined) {
+    const user = await prisma.user.findUnique({ where: { id: data.authorId } });
+    if (!user) throw new Error("User not found");
+  }
+
+  if (data.postId !== undefined) {
+    const post = await prisma.post.findUnique({ where: { id: data.postId } });
+    if (!post) throw new Error("Post not found");
+  }
+
   return await prisma.comment.update({
     where: { id },
     data,
@@ -44,6 +67,9 @@ const updateCommentInDB = async (
 
 // CRUD - DELETE single Commnet
 const deleteCommentFromDB = async (id: number) => {
+  const comment = await prisma.comment.findUnique({ where: { id } });
+  if (!comment) throw new Error("Comment not found");
+
   return await prisma.comment.delete({
     where: { id },
   });

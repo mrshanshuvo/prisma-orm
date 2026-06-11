@@ -1,12 +1,24 @@
+import { sendResponse } from "../../utils/sendResponse";
 import { Request, Response } from "express";
 import { postService } from "./post.service";
 
 const getAllPosts = async (req: Request, res: Response) => {
   try {
     const posts = await postService.getAllPostsFromDB();
-    res.status(200).json(posts);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Success",
+      data: posts,
+    });
   } catch (error: any) {
-    res.status(500).json({ error: error.message || error });
+    const isNotFound = error.message && error.message.includes("not found");
+    sendResponse(res, {
+      statusCode: isNotFound ? 404 : 500,
+      success: false,
+      message: isNotFound ? "Not Found" : "Internal Server Error",
+      error: error.message || error,
+    });
   }
 };
 
@@ -14,15 +26,28 @@ const getPostById = async (req: Request, res: Response) => {
   try {
     const postId = parseInt(req.params.id as string, 10);
     if (isNaN(postId)) {
-      return res.status(400).json({ error: "Invalid user ID" });
+      return sendResponse(res, {
+        statusCode: 400,
+        success: false,
+        message: "Invalid user ID",
+        error: "Invalid user ID",
+      });
     }
     const post = await postService.getPostByIdFromDB(postId);
-    if (!post) {
-      return res.status(404).json({ error: "Post not found" });
-    }
-    res.status(200).json(post);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Success",
+      data: post,
+    });
   } catch (error: any) {
-    res.status(500).json({ error: error.message || error });
+    const isNotFound = error.message && error.message.includes("not found");
+    sendResponse(res, {
+      statusCode: isNotFound ? 404 : 500,
+      success: false,
+      message: isNotFound ? "Not Found" : "Internal Server Error",
+      error: error.message || error,
+    });
   }
 };
 
@@ -30,9 +55,20 @@ const createPost = async (req: Request, res: Response) => {
   try {
     const body = req.body;
     const post = await postService.createPostInDB(body);
-    res.status(201).json(post);
+    sendResponse(res, {
+      statusCode: 201,
+      success: true,
+      message: "Created successfully",
+      data: post,
+    });
   } catch (error: any) {
-    res.status(500).json({ error: error.message || error });
+    const isNotFound = error.message && error.message.includes("not found");
+    sendResponse(res, {
+      statusCode: isNotFound ? 404 : 500,
+      success: false,
+      message: isNotFound ? "Not Found" : "Internal Server Error",
+      error: error.message || error,
+    });
   }
 };
 
@@ -40,13 +76,29 @@ const updatePost = async (req: Request, res: Response) => {
   try {
     const postId = parseInt(req.params.id as string, 10);
     if (isNaN(postId)) {
-      return res.status(400).json({ error: "Invalid user ID" });
+      return sendResponse(res, {
+        statusCode: 400,
+        success: false,
+        message: "Invalid user ID",
+        error: "Invalid user ID",
+      });
     }
     const body = req.body;
     const post = await postService.updatePostByIdInDB(postId, body);
-    res.status(200).json(post);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Updated successfully",
+      data: post,
+    });
   } catch (error: any) {
-    res.status(500).json({ error: error.message || error });
+    const isNotFound = error.message && error.message.includes("not found");
+    sendResponse(res, {
+      statusCode: isNotFound ? 404 : 500,
+      success: false,
+      message: isNotFound ? "Not Found" : "Internal Server Error",
+      error: error.message || error,
+    });
   }
 };
 
@@ -54,12 +106,28 @@ const deletePost = async (req: Request, res: Response) => {
   try {
     const postId = parseInt(req.params.id as string, 10);
     if (isNaN(postId)) {
-      return res.status(400).json({ error: "Invalid user ID" });
+      return sendResponse(res, {
+        statusCode: 400,
+        success: false,
+        message: "Invalid user ID",
+        error: "Invalid user ID",
+      });
     }
     const post = await postService.deletePostByIdInDB(postId);
-    res.status(200).json(post);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Deleted successfully",
+      data: post,
+    });
   } catch (error: any) {
-    res.status(500).json({ error: error.message || error });
+    const isNotFound = error.message && error.message.includes("not found");
+    sendResponse(res, {
+      statusCode: isNotFound ? 404 : 500,
+      success: false,
+      message: isNotFound ? "Not Found" : "Internal Server Error",
+      error: error.message || error,
+    });
   }
 };
 
