@@ -6,6 +6,8 @@ const createCommentInDB = async (payload: {
   content: string;
   postId: number;
   authorId: number;
+  image?: string | null;
+  emojis?: string[];
 }) => {
   const user = await prisma.user.findUnique({
     where: { id: payload.authorId },
@@ -20,6 +22,8 @@ const createCommentInDB = async (payload: {
       content: payload.content,
       postId: payload.postId,
       authorId: payload.authorId,
+      image: payload.image,
+      emojis: payload.emojis,
     },
   });
 };
@@ -80,9 +84,11 @@ const getCommentFromDB = async (id: number) => {
 const updateCommentInDB = async (
   id: number,
   data: {
-    content: string;
-    postId: number;
-    authorId: number;
+    content?: string;
+    postId?: number;
+    authorId?: number;
+    image?: string | null;
+    emojis?: string[];
   },
 ) => {
   const comment = await prisma.comment.findUnique({ where: { id } });

@@ -89,6 +89,8 @@ const createPostInDB = async (data: {
   content?: string | null;
   published?: boolean;
   authorId: number;
+  images?: string[];
+  videos?: string[];
 }) => {
   const user = await prisma.user.findUnique({
     where: { id: data.authorId },
@@ -97,12 +99,7 @@ const createPostInDB = async (data: {
     throw new NotFoundError("User not found");
   }
   return await prisma.post.create({
-    data: {
-      title: data.title,
-      content: data.content,
-      published: data.published,
-      authorId: data.authorId,
-    },
+    data,
   });
 };
 
@@ -114,6 +111,8 @@ const updatePostByIdInDB = async (
     content?: string | null;
     published?: boolean;
     authorId?: number;
+    images?: string[];
+    videos?: string[];
   },
 ) => {
   if (data.authorId !== undefined) {

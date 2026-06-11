@@ -34,17 +34,21 @@ afterAll(async () => {
 });
 
 describe("Comment Integration Tests", () => {
-  it("should create a comment successfully", async () => {
+  it("should create a comment successfully with image and emojis", async () => {
     const res = await request(app).post("/comments").send({
       content: "Test Comment Content",
       postId: testPostId,
       authorId: testAuthorId,
+      image: "https://picsum.photos/200/200",
+      emojis: ["🔥", "❤️"],
     });
 
     expect(res.status).toBe(201);
     expect(res.body.success).toBe(true);
     expect(res.body.data).toHaveProperty("id");
     expect(res.body.data.content).toBe("Test Comment Content");
+    expect(res.body.data.image).toBe("https://picsum.photos/200/200");
+    expect(res.body.data.emojis).toEqual(["🔥", "❤️"]);
   });
 
   it("should reject comment creation on invalid schemas", async () => {
@@ -62,5 +66,23 @@ describe("Comment Integration Tests", () => {
     expect(res.status).toBe(200);
     expect(res.body.data.meta.total).toBe(1);
     expect(res.body.data.result.length).toBe(1);
+  });
+
+  it("should update comment content, image, and emojis successfully", async () => {
+    const commentsRes = await request(app).get("/comments");
+    const commentId = commentsRes.body.data.result[0].id;
+
+    const res = await request(app)
+      .put(`/comments/${commentId}`)
+      .send({
+        content: "Updated Comment Content",
+        image: "https://picsum.photos/300/300",
+        emojis: ["👍"],
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.content).toBe("Updated Comment Content");
+    expect(res.body.data.image).toBe("https://picsum.photos/300/300");
+    expect(res.body.data.emojis).toEqual(["👍"]);
   });
 });

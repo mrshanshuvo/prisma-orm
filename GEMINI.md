@@ -36,10 +36,12 @@ src/
 ├── server.ts               # Server startup and DB initialization
 ├── app.ts                  # Express application setup
 ├── config/                 # Configurations
-│   └── db.ts               # Prisma client and pool setup
+│   ├── db.ts               # Prisma client and pool setup
+│   └── cloudinary.ts       # Cloudinary SDK configuration
 ├── middlewares/            # Express middlewares
 │   ├── errorHandler.ts     # Global error handler
-│   └── validateRequest.ts  # Zod schema validation middleware
+│   ├── validateRequest.ts  # Zod schema validation middleware
+│   └── upload.ts           # Multer file upload configuration
 ├── utils/                  # Shared utility functions
 │   ├── catchAsync.ts       # Async error wrapper
 │   ├── errors.ts           # Custom error classes
@@ -60,11 +62,14 @@ src/
     │   ├── comment.controller.ts
     │   ├── comment.service.ts
     │   └── comment.validation.ts
-    └── like/
-        ├── like.route.ts
-        ├── like.controller.ts
-        ├── like.service.ts
-        └── like.validation.ts
+    ├── like/
+    │   ├── like.route.ts
+    │   ├── like.controller.ts
+    │   ├── like.service.ts
+    │   └── like.validation.ts
+    └── upload/
+        ├── upload.route.ts
+        └── upload.controller.ts
 ```
 
 ---
@@ -353,9 +358,35 @@ export const initDB = async () => {
 export default prisma;
 ```
 
-### **2. Main Application Setup**
+### **2. Cloudinary Configuration**
 
-Routes are registered globally in the app context, with standard parser configurations and a fallback handler.
+Cloudinary configuration is centralized in `src/config/cloudinary.ts` to manage third-party image/video asset uploads securely.
+
+**File**: `/src/config/cloudinary.ts`
+
+```typescript
+import { v2 as cloudinary } from "cloudinary";
+import "dotenv/config";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+export const uploadToCloudinary = async (filePath: string): Promise<string> => {
+  const result = await cloudinary.uploader.upload(filePath, {
+    resource_type: "auto",
+  });
+  return result.secure_url;
+};
+
+export default cloudinary;
+```
+
+### **3. Main Application Setup**
+
+Routes are registered globally in the app context, with standard parser configurations, static asset directories, and a fallback handler.
 
 **File**: `/src/app.ts`
 
@@ -365,16 +396,20 @@ import { userRoutes } from "./modules/user/user.route";
 import { postRoutes } from "./modules/post/post.route";
 import { commentRoutes } from "./modules/comment/comment.route";
 import { likeRoutes } from "./modules/like/like.route";
+import { uploadRoutes } from "./modules/upload/upload.route";
+import path from "path";
 
 const app = express();
 
 app.use(express.json());
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Routes registration
 app.use("/", userRoutes);
 app.use("/", postRoutes);
 app.use("/", commentRoutes);
 app.use("/", likeRoutes);
+app.use("/", uploadRoutes);
 
 // Fallback Route
 app.use((req, res) => {

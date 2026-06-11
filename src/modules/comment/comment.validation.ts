@@ -13,6 +13,8 @@ const createCommentSchema = z.object({
   authorId: z.number({
     message: "Author ID is required",
   }),
+  image: z.string().nullable().optional(),
+  emojis: z.array(z.string()).optional(),
 });
 
 // Validation Schema - UPDATE single Comment
@@ -20,6 +22,8 @@ const updateCommentSchema = z.object({
   content: z.string().min(1, "Content cannot be empty").optional(),
   postId: z.number().optional(),
   authorId: z.number().optional(),
+  image: z.string().nullable().optional(),
+  emojis: z.array(z.string()).optional(),
 });
 
 export const commentValidation = {

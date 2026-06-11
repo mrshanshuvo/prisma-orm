@@ -24,7 +24,8 @@ Content-Type: application/json
 
 {
   "name": "Shovu",
-  "email": "shvou@gmail.com"
+  "email": "shvou@gmail.com",
+  "profilePic": "https://api.dicebear.com/7.x/adventurer/svg?seed=Shovu"
 }
 
 ### Get User by ID
@@ -37,7 +38,8 @@ Content-Type: application/json
 
 {
   "name": "Shovu",
-  "email": "shovu1@email.com"
+  "email": "shovu1@email.com",
+  "profilePic": "https://api.dicebear.com/7.x/adventurer/svg?seed=ShovuUpdated"
 }
 
 ### Delete User
@@ -81,7 +83,9 @@ Content-Type: application/json
   "title": "Post 1",
   "content": "Content 1",
   "published": true,
-  "authorId": 1
+  "authorId": 1,
+  "images": ["https://picsum.photos/seed/post1/600/400"],
+  "videos": ["https://www.w3schools.com/html/mov_bbb.mp4"]
 }
 
 ### Update Post
@@ -91,7 +95,8 @@ Content-Type: application/json
 {
   "title": "Post 1 Updated",
   "content": "Content 1 Updated",
-  "authorId": 1
+  "authorId": 1,
+  "images": ["https://picsum.photos/seed/post1updated/600/400"]
 }
 
 ### Delete Post
@@ -120,9 +125,11 @@ POST {{base}}/comments
 Content-Type: application/json
 
 {
-  "content" : "comment 3",
-  "postId" : 1,
-  "authorId" : 2
+  "content": "comment 3",
+  "postId": 1,
+  "authorId": 2,
+  "image": "https://picsum.photos/seed/comment3/200/200",
+  "emojis": ["🔥", "❤️"]
 }
 
 ### Update Comment
@@ -130,9 +137,11 @@ PUT {{base}}/comments/1 HTTP/1.1
 Content-Type: application/json
 
 {
-  "content" : "comment 3 updated",
-  "postId" : 1,
-  "authorId" : 2
+  "content": "comment 3 updated",
+  "postId": 1,
+  "authorId": 2,
+  "image": "https://picsum.photos/seed/comment3updated/200/200",
+  "emojis": ["🚀"]
 }
 
 ### Delete Comment
@@ -177,3 +186,36 @@ Accept: application/json
 ### Error 400 (Bad Request / Invalid ID parameter)
 GET {{base}}/users/abc
 Accept: application/json
+
+
+# ==========================================
+# FILE UPLOAD ENDPOINTS (CLOUDINARY)
+# ==========================================
+
+### Upload Single File to Cloudinary
+POST {{base}}/upload/single
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="avatar.png"
+Content-Type: image/png
+
+<dummy binary/text content>
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Upload Multiple Files to Cloudinary
+POST {{base}}/upload/multiple
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="files"; filename="pic1.png"
+Content-Type: image/png
+
+<dummy content>
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="files"; filename="pic2.png"
+Content-Type: image/png
+
+<dummy content>
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+

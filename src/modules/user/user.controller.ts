@@ -38,6 +38,7 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
   const user = await userService.createUser({
     email: body.email,
     name: body.name || null,
+    profilePic: body.profilePic || null,
   });
   sendResponse(res, {
     statusCode: 201,
@@ -57,6 +58,7 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
   const user = await userService.updateUser(userId, {
     email: body.email,
     name: body.name,
+    profilePic: body.profilePic,
   });
   sendResponse(res, {
     statusCode: 200,

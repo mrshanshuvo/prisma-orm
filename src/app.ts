@@ -3,11 +3,15 @@ import { userRoutes } from "./modules/user/user.route";
 import { postRoutes } from "./modules/post/post.route";
 import { commentRoutes } from "./modules/comment/comment.route";
 import { likeRoutes } from "./modules/like/like.route";
+import { uploadRoutes } from "./modules/upload/upload.route";
 import { errorHandler } from "./middlewares/errorHandler";
+
+import path from "path";
 
 const app = express();
 
 app.use(express.json());
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Health check / Root
 app.get("/", async (req, res) => {
@@ -30,6 +34,7 @@ app.use("/", userRoutes);
 app.use("/", postRoutes);
 app.use("/", commentRoutes);
 app.use("/", likeRoutes);
+app.use("/", uploadRoutes);
 
 // Route not found (Fallback)
 app.use((req, res) => {

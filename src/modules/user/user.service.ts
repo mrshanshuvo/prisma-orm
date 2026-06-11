@@ -38,7 +38,11 @@ const getUserById = async (id: number) => {
 };
 
 // CRUD - CREATE single User
-const createUser = async (data: { email: string; name?: string | null }) => {
+const createUser = async (data: {
+  email: string;
+  name?: string | null;
+  profilePic?: string | null;
+}) => {
   return await prisma.user.create({
     data,
   });
@@ -47,7 +51,7 @@ const createUser = async (data: { email: string; name?: string | null }) => {
 // CRUD - UPDATE single User
 const updateUser = async (
   id: number,
-  data: { email?: string; name?: string | null },
+  data: { email?: string; name?: string | null; profilePic?: string | null },
 ) => {
   const user = await prisma.user.findUnique({ where: { id } });
   if (!user) throw new NotFoundError("User not found");

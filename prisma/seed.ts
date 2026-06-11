@@ -15,6 +15,7 @@ async function main() {
       data: {
         email: `user${i}@example.com`,
         name: `User ${i}`,
+        profilePic: `https://api.dicebear.com/7.x/adventurer/svg?seed=user${i}`,
       },
     });
     users.push(user);
@@ -30,12 +31,15 @@ async function main() {
         content: `This is the content of post number ${i}.`,
         published: Math.random() > 0.3,
         authorId: randomUser.id,
+        images: [`https://picsum.photos/seed/post${i}/600/400`],
+        videos: [`https://www.w3schools.com/html/mov_bbb.mp4`],
       },
     });
     posts.push(post);
   }
 
   console.log("Seeding 20 comments...");
+  const emojisPool = ["😀", "❤️", "🔥", "🚀", "🙌", "🎉", "💯"];
   for (let i = 1; i <= 20; i++) {
     const randomUser = users[Math.floor(Math.random() * users.length)];
     const randomPost = posts[Math.floor(Math.random() * posts.length)];
@@ -44,6 +48,11 @@ async function main() {
         content: `This is comment number ${i}`,
         postId: randomPost.id,
         authorId: randomUser.id,
+        image: `https://picsum.photos/seed/comment${i}/200/200`,
+        emojis: [
+          emojisPool[Math.floor(Math.random() * emojisPool.length)],
+          emojisPool[Math.floor(Math.random() * emojisPool.length)],
+        ],
       },
     });
   }
