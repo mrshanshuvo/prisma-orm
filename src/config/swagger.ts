@@ -15,6 +15,10 @@ const options: swaggerJSDoc.Options = {
         url: "http://localhost:3000",
         description: "Local development server",
       },
+      {
+        url: "https://prisma-orm-sable.vercel.app/",
+        description: "Production server",
+      },
     ],
   },
   apis: ["./src/docs/*.yaml", "./src/modules/**/*.yaml"],
