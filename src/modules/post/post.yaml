@@ -48,11 +48,11 @@ paths:
                     type: object
                     properties:
                       meta:
-                        $ref: '#/components/schemas/Meta'
+                        $ref: "#/components/schemas/Meta"
                       result:
                         type: array
                         items:
-                          $ref: '#/components/schemas/Post'
+                          $ref: "#/components/schemas/Post"
     post:
       summary: Create a post
       tags:
@@ -105,7 +105,7 @@ paths:
                     type: string
                     example: "Created successfully"
                   data:
-                    $ref: '#/components/schemas/Post'
+                    $ref: "#/components/schemas/Post"
         400:
           description: Bad request / validation error
 
@@ -135,7 +135,7 @@ paths:
                     type: string
                     example: "Success"
                   data:
-                    $ref: '#/components/schemas/PostWithDetails'
+                    $ref: "#/components/schemas/PostWithDetails"
         404:
           description: Post not found
     put:
@@ -229,7 +229,7 @@ components:
 
     PostWithDetails:
       allOf:
-        - $ref: '#/components/schemas/Post'
+        - $ref: "#/components/schemas/Post"
         - type: object
           properties:
             comments:

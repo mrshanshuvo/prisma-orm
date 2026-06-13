@@ -43,11 +43,11 @@ paths:
                     type: object
                     properties:
                       meta:
-                        $ref: '#/components/schemas/Meta'
+                        $ref: "#/components/schemas/Meta"
                       result:
                         type: array
                         items:
-                          $ref: '#/components/schemas/Comment'
+                          $ref: "#/components/schemas/Comment"
     post:
       summary: Create a comment
       tags:
